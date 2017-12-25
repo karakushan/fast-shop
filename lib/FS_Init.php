@@ -32,10 +32,6 @@ class FS_Init {
 
 		add_filter( "plugin_action_links_" . FS_BASENAME, array( $this, 'plugin_settings_link' ) );
 		add_action( 'plugins_loaded', array( $this, 'true_load_plugin_textdomain' ) );
-
-		// хуки срабатывают в момент активации и деактивации плагина
-		register_activation_hook( __FILE__, array( $this, 'fs_activate' ) );
-		register_deactivation_hook( __FILE__, array( $this, 'fs_deactivate' ) );
 	} // END public function __construct
 
 	function true_load_plugin_textdomain() {
@@ -104,39 +100,5 @@ class FS_Init {
 
 		);
 		wp_localize_script( 'fs-admin', 'fShop', $l10n );
-	}
-
-	/**
-	 *Функция срабатывает один раз при активации плагина
-	 */
-	function fs_activate() {
-		add_role(
-			FS_Config::getUsers( 'new_user_role' ),
-			FS_Config::getUsers( 'new_user_name' ),
-			array(
-				'read'    => true,
-				'level_0' => true
-			) );
-		/* регистрируем статусы заказа по умолчанию */
-		$taxonomies = new FS_Taxonomies_Class;
-		$taxonomies->create_taxonomy();
-		$order_statuses = FS_Config::default_order_statuses();
-		foreach ( $order_statuses as $key => $order_status ) {
-			$args     = array(
-				'alias_of'    => '',
-				'description' => $order_status['description'],
-				'parent'      => 0,
-				'slug'        => $key,
-			);
-			$new_term = wp_insert_term( $order_status['name'], 'order-statuses', $args );
-		}
-		if ( ! is_wp_error( $new_term ) ) {
-			echo $new_term->get_error_message();
-		}
-
-
-	}
-
-	function fs_deactivate() {
 	}
 }

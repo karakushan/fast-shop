@@ -55,3 +55,52 @@ if ( ! class_exists( '\FS\FS_Init', false ) ) {
 	$fs_init              = new \FS\FS_Init;
 	$GLOBALS['fs_config'] = new FS\FS_Config();
 }
+
+function fs_activate_callback() {
+	// Добавляем роль клиента
+	add_role(
+		'client',
+		__( 'Client', 'fast-shop' ),
+		array(
+			'read'    => true,
+			'level_0' => true
+		)
+	);
+	$pages = array(
+		'cart'      => array(
+			'name'    => __( 'Basket', 'fast-shop' ),
+			'content' => '[fs_cart]'
+		),
+		'payment'   => array(
+			'name'    => __( 'Payment', 'fast-shop' ),
+			'content' => '[fs_payment]'
+		),
+		'thanks'    => array(
+			'name'    => __( 'Thank you', 'fast-shop' ),
+			'content' => '[fs_order_info]'
+		),
+		'wishlist'  => array(
+			'name'    => __( 'Wishlist', 'fast-shop' ),
+			'content' => '[fs_fishlist]'
+		),
+		'dashboard' => array(
+			'name'    => __( 'Dashboard', 'fast-shop' ),
+			'content' => '[fs_user_cabinet]'
+		),
+		'auth'      => array(
+			'name'    => __( 'Authorization', 'fast-shop' ),
+			'content' => '[fs_login]'
+		)
+	);
+	foreach ( $pages as $key => $page ) {
+		wp_insert_post( array(
+			'post_type'    => 'page',
+			'post_name'    => $key,
+			'post_title'   => $page['name'],
+			'post_content' => $page['content'],
+			'post_status'  => 'publish'
+		) );
+	}
+}
+
+register_activation_hook( __FILE__, 'fs_activate_callback' );
