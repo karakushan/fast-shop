@@ -531,7 +531,8 @@ function fs_get_cart( $args = array() ) {
 				'base_price' => $offer->base_price_display,
 				'all_price'  => $offer->cost_display,
 				'sku'        => $offer->sku,
-				'currency'   => $offer->currency
+				'currency'   =>  $offer->currency,
+				'variation' =>  (int) $item['variation']
 			);
 		}
 	}
